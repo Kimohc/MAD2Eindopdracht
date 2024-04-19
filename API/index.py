@@ -78,6 +78,16 @@ async def get_tasks(db: db_dependency):
     return db.query(models.tasks).all()
 
 
+@app.get("/tasks/{task_id}", status_code=status.HTTP_200_OK)
+async def get_task(task_id: int, db: db_dependency):
+    return db.query(models.tasks).filter(models.tasks.task_id == task_id).first()
+
+
+@app.get("tasks/{user_id}", status_code=status.HTTP_200_OK)
+async def get_tasks_user(user_id: int, db: db_dependency):
+    return db.query(models.tasks).filter(models.tasks.user_id == user_id).all()
+
+
 @app.delete("/tasks/{task_id}", status_code=status.HTTP_200_OK)
 async def delete_task(task_id: int, db: db_dependency):
     db.query(models.tasks).filter(models.tasks.task_id == task_id).delete()
