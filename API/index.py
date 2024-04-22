@@ -5,8 +5,6 @@ import models
 from database import engine, SessionLocal
 from sqlalchemy.orm import Session
 from starlette.middleware.cors import CORSMiddleware
-import random
-import string
 
 password_length_total = 0
 app = FastAPI()
@@ -23,7 +21,7 @@ models.Base.metadata.create_all(bind=engine)
 
 class TaskBase(BaseModel):
     naam: str
-    datum: str
+    beschrijving: str
     user_id: int
 
 
@@ -100,3 +98,16 @@ async def update_task(task_id: int, task: TaskBase, db: db_dependency):
     db.query(models.tasks).filter(models.tasks.task_id == task_id).update(task.dict())
     db.commit()
     return {"message": "Task updated"}
+
+
+@app.post("/users/login", status_code=status.HTTP_200_OK)
+async def check_if_user_exists(user: UserBase, db: db_dependency):
+    db_user = models.users(**user.dict())
+    can_login = False
+    user = db.query(models.users).filter(models.users.username == db_user.username).filter(
+        models.users.password == db_user.password).first()
+    if user is None:
+        can_login = False
+        return can_login
+    can_login = True
+    return can_login

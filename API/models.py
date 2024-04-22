@@ -11,8 +11,7 @@ class users(Base):
 
 class tasks(Base):
     __tablename__ = 'tasks'
-
     task_id = Column(Integer, primary_key = True, index = True)
     naam = Column(String(255))
-    datum = Column(String(255))
+    beschrijving = Column(String(255))
     user_id = Column(Integer)
