@@ -1,3 +1,6 @@
+import 'package:eindopdracht/views/login_page.dart';
+import 'package:eindopdracht/views/profile_page.dart';
+import 'package:eindopdracht/views/todo_list.dart';
 import 'package:flutter/material.dart';
 
 class MyDrawer extends StatelessWidget {
@@ -19,7 +22,10 @@ class MyDrawer extends StatelessWidget {
             leading: Icon(Icons.home),
             title: Text("H O M E"),
             onTap: () {
-              Navigator.pop(context);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => ToDoListPage()),
+              );
             },
           )
           ),
@@ -32,8 +38,11 @@ class MyDrawer extends StatelessWidget {
                 leading: Icon(Icons.person),
                 title: Text("P R O F I L E "),
                 onTap: () {
-                  Navigator.pop(context);
-                },
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => ProfilePage()),
+                  );
+                }
               )
           ),
 
@@ -45,7 +54,10 @@ class MyDrawer extends StatelessWidget {
                 leading: Icon(Icons.logout),
                 title: Text("L O G O U T"),
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                  );
                 },
               )
           ),

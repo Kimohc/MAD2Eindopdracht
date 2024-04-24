@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:eindopdracht/Components/mybutton.dart';
 import 'package:eindopdracht/Components/textfield_comp.dart';
@@ -17,7 +18,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
+  Map LoggedUser  = {};
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,10 +82,10 @@ class _LoginPageState extends State<LoginPage> {
     await Navigator.push(context, route);
 
   }
-  void navigateToHomePage(){
+  void navigateToHomePage(Map user){
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => ToDoListPage()),
+      MaterialPageRoute(builder: (context) => ToDoListPage(loggedUser: user,)),
     );
   }
   Future<void> Login() async{
@@ -108,7 +109,9 @@ class _LoginPageState extends State<LoginPage> {
       if(response.body == 'true')
         {
           showMessage("User logged in");
-          navigateToHomePage();
+          LoggedUser = body;
+          print(LoggedUser);
+          navigateToHomePage(LoggedUser);
         }
       else if(response.body == 'false') showMessage("Try to register first");
     }

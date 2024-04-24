@@ -81,7 +81,7 @@ async def get_task(task_id: int, db: db_dependency):
     return db.query(models.tasks).filter(models.tasks.task_id == task_id).first()
 
 
-@app.get("tasks/{user_id}", status_code=status.HTTP_200_OK)
+@app.get("/tasks/users/{user_id}", status_code=status.HTTP_200_OK)
 async def get_tasks_user(user_id: int, db: db_dependency):
     return db.query(models.tasks).filter(models.tasks.user_id == user_id).all()
 
@@ -111,3 +111,11 @@ async def check_if_user_exists(user: UserBase, db: db_dependency):
         return can_login
     can_login = True
     return can_login
+
+
+@app.post('/users/getid', status_code=status.HTTP_200_OK)
+async def get_user_by_username_password(user: UserBase, db: db_dependency):
+    db_user = models.users(**user.dict())
+    user = db.query(models.users).filter(models.users.username == db_user.username).filter(
+        models.users.password == db_user.password).first()
+    return user.user_id

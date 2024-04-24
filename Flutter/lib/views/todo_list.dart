@@ -8,7 +8,11 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class ToDoListPage extends StatefulWidget {
-  const ToDoListPage({super.key});
+  final Map? loggedUser;
+  const ToDoListPage({
+    super.key,
+    this.loggedUser,
+  });
 
   @override
   State<ToDoListPage> createState() => _ToDoListPageState();
@@ -16,11 +20,14 @@ class ToDoListPage extends StatefulWidget {
 
 class _ToDoListPageState extends State<ToDoListPage> {
   List items = [];
+  int userId = 0;
 
   @override
   void initState(){
+    Map? user = widget.loggedUser;
+    print(user);
+    getUser(user);
     super.initState();
-    getTasks();
   }
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,9 +44,7 @@ class _ToDoListPageState extends State<ToDoListPage> {
 
       )
       ,
-      body: RefreshIndicator(
-        onRefresh: getTasks,
-        child: ListView.builder(
+      body: ListView.builder(
           itemCount: items.length,
           padding: EdgeInsets.all(12),
           itemBuilder: (context, index) {
@@ -53,7 +58,7 @@ class _ToDoListPageState extends State<ToDoListPage> {
               trailing: PopupMenuButton(
                 onSelected: (value) {
                   if(value == 'edit'){
-                    navigateToEditPage(task);
+                    navigateToEditPage(task, userId);
                   }
                   else if(value == 'delete')
                     {
@@ -77,32 +82,31 @@ class _ToDoListPageState extends State<ToDoListPage> {
             ),
             );
       }),
-      ),
-      floatingActionButton: FloatingActionButton.extended(onPressed: navigateToAddPage, label: Text("Add Task"), backgroundColor: Theme.of(context).colorScheme.inversePrimary, ),
+      floatingActionButton: FloatingActionButton.extended(onPressed: () => navigateToAddPage(userId), label: Text("Add Task"), backgroundColor: Theme.of(context).colorScheme.inversePrimary, ),
     );
   }
 
-  Future<void>navigateToAddPage() async{
-  final route = MaterialPageRoute(builder: (context) => AddTodoPage(),
+  Future<void>navigateToAddPage(int id) async{
+  final route = MaterialPageRoute(builder: (context) => AddTodoPage(userId: id,),
 
   );
   await Navigator.push(context, route);
-  getTasks();
+  getTasks(userId);
   }
 
-  Future<void> navigateToEditPage(Map item) async{
-    final route = MaterialPageRoute(builder: (context) => AddTodoPage(todo: item),
+  Future<void> navigateToEditPage(Map item, int id) async{
+    final route = MaterialPageRoute(builder: (context) => AddTodoPage(todo: item, userId: id,),
 
     );
     await Navigator.push(context, route);
-    getTasks();
+    getTasks(userId);
   }
 
-  Future<void> getTasks() async {
-    const url = 'http://127.0.0.1:8000/tasks';
+  Future<void> getTasks(int id) async {
+    final url = "http://127.0.0.1:8000/tasks/users/$id";
     final uri = Uri.parse(url);
     final response = await http.get(uri);
-
+    print('got heer');
     print(response.statusCode);
     if (response.statusCode == 200) {
       final List<dynamic> jsonList = jsonDecode(response.body);
@@ -128,7 +132,7 @@ class _ToDoListPageState extends State<ToDoListPage> {
     final response = await http.delete(uri);
     if(response.statusCode == 200){
     showMessage("Task Deleted");
-    getTasks();
+    getTasks(userId);
     }
     else{
       showMessage("Something Went wrong");
@@ -139,6 +143,24 @@ class _ToDoListPageState extends State<ToDoListPage> {
   void showMessage(String message){
     final snackBar = SnackBar(content: Text(message));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+  Future<void> getUser(user) async {
+    final url = 'http://127.0.0.1:8000/users/getid';
+    final uri = Uri.parse(url);
+    final body = user;
+    print(user);
+    final response = await http.post(uri,
+      body: jsonEncode(body),
+      headers: {'Content-Type': 'application/json'});
+
+    if(response.statusCode == 200){
+      userId = int.parse(response.body);
+      print(userId);
+      getTasks(userId);
+    }
+    else{
+      showMessage(response.body);
+    }
   }
 
 

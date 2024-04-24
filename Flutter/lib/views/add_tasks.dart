@@ -6,9 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 class AddTodoPage extends StatefulWidget {
   final Map? todo;
+  final int? userId;
   const AddTodoPage({
     super.key,
     this.todo,
+    this.userId,
   });
 
   @override
@@ -23,6 +25,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
   void initState(){
     super.initState();
     final todo = widget.todo;
+    final userId = widget.userId;
     if(todo != null){
       isEdit = true;
       final title = todo['naam'];
@@ -68,10 +71,11 @@ class _AddTodoPageState extends State<AddTodoPage> {
   Future <void> submitData() async{
   final naam = naamController.text;
   final description = descriptionController.text;
+  final userId = widget.userId;
   final body = {
     'naam': naam,
     'beschrijving': description,
-    'user_id': 2
+    'user_id': userId,
   };
   final url = 'http://127.0.0.1:8000/tasks/';
   final uri = Uri.parse(url);
@@ -97,6 +101,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
   }
   Future<void> updateData() async {
     final todo = widget.todo;
+    final userId = widget.userId;
     if(todo == null){
       showMessage('Something went wrong try again');
       return;
@@ -104,10 +109,11 @@ class _AddTodoPageState extends State<AddTodoPage> {
     final id = todo['task_id'];
     final naam = naamController.text;
     final description = descriptionController.text;
+
     final body = {
       'naam': naam,
       'beschrijving': description,
-      'user_id': 2
+      'user_id': userId,
     };
     final url = 'http://127.0.0.1:8000/tasks/$id';
     final uri = Uri.parse(url);
