@@ -71,6 +71,10 @@ class _AddTodoPageState extends State<AddTodoPage> {
   Future <void> submitData() async{
   final naam = naamController.text;
   final description = descriptionController.text;
+  if(naam.isEmpty){
+    showMessage("Je moet iets invoeren");
+    return;
+  }
   final userId = widget.userId;
   final body = {
     'naam': naam,
@@ -110,6 +114,10 @@ class _AddTodoPageState extends State<AddTodoPage> {
     final naam = naamController.text;
     final description = descriptionController.text;
 
+    if(naam.isEmpty){
+      showMessage("Je moet iets invoeren");
+      return;
+    }
     final body = {
       'naam': naam,
       'beschrijving': description,

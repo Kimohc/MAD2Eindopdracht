@@ -21,10 +21,10 @@ class ToDoListPage extends StatefulWidget {
 class _ToDoListPageState extends State<ToDoListPage> {
   List items = [];
   int userId = 0;
-
+  Map? user;
   @override
   void initState(){
-    Map? user = widget.loggedUser;
+    user = widget.loggedUser;
     print(user);
     getUser(user);
     super.initState();
@@ -41,7 +41,7 @@ class _ToDoListPageState extends State<ToDoListPage> {
 
       ),
       drawer: MyDrawer(
-
+      loggedUser: user,
       )
       ,
       body: ListView.builder(
@@ -106,7 +106,6 @@ class _ToDoListPageState extends State<ToDoListPage> {
     final url = "http://127.0.0.1:8000/tasks/users/$id";
     final uri = Uri.parse(url);
     final response = await http.get(uri);
-    print('got heer');
     print(response.statusCode);
     if (response.statusCode == 200) {
       final List<dynamic> jsonList = jsonDecode(response.body);
@@ -131,11 +130,11 @@ class _ToDoListPageState extends State<ToDoListPage> {
     final uri = Uri.parse(url);
     final response = await http.delete(uri);
     if(response.statusCode == 200){
-    showMessage("Task Deleted");
+    showMessage("Task verwijderd");
     getTasks(userId);
     }
     else{
-      showMessage("Something Went wrong");
+      showMessage("Iets is misgegaan");
     }
 
   }
