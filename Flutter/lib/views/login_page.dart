@@ -18,7 +18,9 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  Map LoggedUser  = {};
+  Map LoggedUser  = {
+  };
+  String token = '';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,10 +84,10 @@ class _LoginPageState extends State<LoginPage> {
     await Navigator.push(context, route);
 
   }
-  void navigateToHomePage(Map user){
+  void navigateToHomePage(Map user, String token){
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => ToDoListPage(loggedUser: user,)),
+      MaterialPageRoute(builder: (context) => ToDoListPage(loggedUser: user, token: token,)),
     );
   }
   Future<void> Login() async{
@@ -105,18 +107,26 @@ class _LoginPageState extends State<LoginPage> {
         }
 
     );
+    print(response.body);
     if(response.statusCode == 200){
-      if(response.body == 'true')
-        {
+      final responseData = jsonDecode(response.body);
           showMessage("User logged in");
-          LoggedUser = body;
+          LoggedUser = {
+            'username' : responseData['username'],
+            'password': responseData['password'],
+          };
+          token = responseData['access_token'];
           print(LoggedUser);
-          navigateToHomePage(LoggedUser);
-        }
-      else if(response.body == 'false') showMessage("Try to register first");
+          navigateToHomePage(LoggedUser, token );
+          if(response.body == 'false'){
+        print(response.body);
+        return;
+      }
     }
     else{
       showMessage("Couldnt log in try to register first");
+      print(response.body);
+
     }
   }
   void showMessage(String message){

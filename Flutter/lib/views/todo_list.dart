@@ -9,9 +9,11 @@ import 'package:http/http.dart' as http;
 
 class ToDoListPage extends StatefulWidget {
   final Map? loggedUser;
+  final String? token;
   const ToDoListPage({
     super.key,
     this.loggedUser,
+    this.token,
   });
 
   @override
@@ -22,9 +24,11 @@ class _ToDoListPageState extends State<ToDoListPage> {
   List items = [];
   int userId = 0;
   Map? user;
+  String? token;
   @override
   void initState(){
     user = widget.loggedUser;
+    token = widget.token;
     print(user);
     getUser(user);
     super.initState();
@@ -58,7 +62,7 @@ class _ToDoListPageState extends State<ToDoListPage> {
               trailing: PopupMenuButton(
                 onSelected: (value) {
                   if(value == 'edit'){
-                    navigateToEditPage(task, userId);
+                    navigateToEditPage(task, userId, token, user);
                   }
                   else if(value == 'delete')
                     {
@@ -82,20 +86,20 @@ class _ToDoListPageState extends State<ToDoListPage> {
             ),
             );
       }),
-      floatingActionButton: FloatingActionButton.extended(onPressed: () => navigateToAddPage(userId), label: Text("Add Task"), backgroundColor: Theme.of(context).colorScheme.inversePrimary, ),
+      floatingActionButton: FloatingActionButton.extended(onPressed: () => navigateToAddPage(userId, token, user), label: Text("Add Task"), backgroundColor: Theme.of(context).colorScheme.inversePrimary, ),
     );
   }
 
-  Future<void>navigateToAddPage(int id) async{
-  final route = MaterialPageRoute(builder: (context) => AddTodoPage(userId: id,),
-
+  Future<void>navigateToAddPage(int id, String? token, Map? user) async{
+  final route = MaterialPageRoute(builder: (context) => AddTodoPage(userId: id, token: token, loggedUser: user,),
   );
+  showMessage(token.toString());
   await Navigator.push(context, route);
   getTasks(userId);
   }
 
-  Future<void> navigateToEditPage(Map item, int id) async{
-    final route = MaterialPageRoute(builder: (context) => AddTodoPage(todo: item, userId: id,),
+  Future<void> navigateToEditPage(Map item, int id, String? token, Map? user) async{
+    final route = MaterialPageRoute(builder: (context) => AddTodoPage(todo: item, userId: id, token: token, loggedUser: user,),
 
     );
     await Navigator.push(context, route);
@@ -103,9 +107,15 @@ class _ToDoListPageState extends State<ToDoListPage> {
   }
 
   Future<void> getTasks(int id) async {
+    final token = widget.token;
     final url = "http://127.0.0.1:8000/tasks/users/$id";
     final uri = Uri.parse(url);
-    final response = await http.get(uri);
+    final response = await http.get(
+        uri,
+        headers: {
+        'Authorization': 'bearer $token',
+    });
+    print(token);
     print(response.statusCode);
     if (response.statusCode == 200) {
       final List<dynamic> jsonList = jsonDecode(response.body);
@@ -126,17 +136,30 @@ class _ToDoListPageState extends State<ToDoListPage> {
     }
   }
   Future<void> delete_task(int id) async{
+    int toDelete = id;
     final url = 'http://127.0.0.1:8000/tasks/$id';
     final uri = Uri.parse(url);
-    final response = await http.delete(uri);
+    final response = await http.delete(
+        uri,
+        headers: {
+          'Authorization': 'bearer $token',
+        }
+    );
+    if(response.statusCode == 401){
+      showMessage('getting new token');
+      final username = user?['username'];
+      print(username);
+      final url = 'http://127.0.0.1:8000/refresh?username=$username';
+      final uri = Uri.parse(url);
+      final response = await http.get(uri);
+      final responseData = jsonDecode(response.body);
+      token = responseData['acces_token'];
+      delete_task(toDelete);
+    }
     if(response.statusCode == 200){
     showMessage("Task verwijderd");
     getTasks(userId);
     }
-    else{
-      showMessage("Iets is misgegaan");
-    }
-
   }
 
   void showMessage(String message){
@@ -150,7 +173,7 @@ class _ToDoListPageState extends State<ToDoListPage> {
     print(user);
     final response = await http.post(uri,
       body: jsonEncode(body),
-      headers: {'Content-Type': 'application/json'});
+    headers: {'Content-Type': 'application/json'});
 
     if(response.statusCode == 200){
       userId = int.parse(response.body);

@@ -29,11 +29,25 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                borderRadius: BorderRadius.circular(24),
+              ),
+              padding: EdgeInsets.all(25),
+              child: Icon(
+                Icons.person,
+                size: 64,
+              ),
+            ),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                  Text("Username: ",),
-                  Text(user?['username']),
+                  Text(user?['username'], style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),),
                 ],
             ),
 
