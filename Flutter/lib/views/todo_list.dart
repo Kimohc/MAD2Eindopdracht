@@ -37,7 +37,7 @@ class _ToDoListPageState extends State<ToDoListPage> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        title: Text("ToDo List"),
+        title: Text("T o D o L i s t"),
         centerTitle: true,
         foregroundColor: Theme.of(context).colorScheme.primary,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -93,7 +93,6 @@ class _ToDoListPageState extends State<ToDoListPage> {
   Future<void>navigateToAddPage(int id, String? token, Map? user) async{
   final route = MaterialPageRoute(builder: (context) => AddTodoPage(userId: id, token: token, loggedUser: user,),
   );
-  showMessage(token.toString());
   await Navigator.push(context, route);
   getTasks(userId);
   }
@@ -146,7 +145,7 @@ class _ToDoListPageState extends State<ToDoListPage> {
         }
     );
     if(response.statusCode == 401){
-      showMessage('getting new token');
+      showMessage('Nieuwe token ophalen');
       final username = user?['username'];
       print(username);
       final url = 'http://127.0.0.1:8000/refresh?username=$username';

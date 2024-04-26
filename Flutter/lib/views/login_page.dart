@@ -110,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
     print(response.body);
     if(response.statusCode == 200){
       final responseData = jsonDecode(response.body);
-          showMessage("User logged in");
+          showMessage("User ingelogd");
           LoggedUser = {
             'username' : responseData['username'],
             'password': responseData['password'],
@@ -124,7 +124,7 @@ class _LoginPageState extends State<LoginPage> {
       }
     }
     else{
-      showMessage("Couldnt log in try to register first");
+      showMessage("Probeer eerst een account aan te maken");
       print(response.body);
 
     }

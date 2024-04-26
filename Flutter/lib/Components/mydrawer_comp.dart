@@ -23,12 +23,16 @@ class _MyDrawerState extends State<MyDrawer> {
     super.initState();
   }
   Widget build(BuildContext context) {
+
     return Drawer(
+
       backgroundColor: Theme
           .of(context)
           .colorScheme
           .background,
+
       child: Column(
+
         children: [
           DrawerHeader(
             child: Icon(Icons.favorite, color: Theme
@@ -80,8 +84,22 @@ class _MyDrawerState extends State<MyDrawer> {
                     MaterialPageRoute(builder: (context) => LoginPage()),
                   );
                 },
-              )
+              ),
           ),
+          SizedBox(height: 25,),
+
+          Padding(
+              padding: EdgeInsets.only(left: 25),
+            child: ListTile(
+              textColor: Colors.black,
+              leading: Icon(Icons.question_mark),
+              title: Text("A B O U T"),
+              onTap: (){
+                showLicensePage(context: context);
+                    }
+
+            ),
+    ),
         ],
       ),
     );

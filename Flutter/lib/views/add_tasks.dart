@@ -32,7 +32,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
     final todo = widget.todo;
     final userId = widget.userId;
     user = widget.loggedUser;
-     token = widget.token;
+    token = widget.token;
     if(todo != null){
       isEdit = true;
       final title = todo['naam'];
@@ -45,7 +45,6 @@ class _AddTodoPageState extends State<AddTodoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-
       appBar: AppBar(
         foregroundColor: Theme.of(context).colorScheme.primary,
         title: Text(
@@ -78,7 +77,6 @@ class _AddTodoPageState extends State<AddTodoPage> {
   Future <void> submitData() async{
   final naam = naamController.text;
   final description = descriptionController.text;
-  print(token);
   if(naam.isEmpty){
     showMessage("Je moet iets invoeren");
     return;
@@ -155,7 +153,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
     },
     );
     if(response.statusCode == 401){
-      showMessage('getting new token');
+      showMessage('Nieuwe token ophalen');
       final username = user?['username'];
       print(username);
       final url = 'http://127.0.0.1:8000/refresh?username=$username';
@@ -166,7 +164,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
       updateData();
     }
    if(response.statusCode == 200){
-     showMessage('Task updated');
+     showMessage('Task geupdate');
    }
    else{
      showMessage(response.body);

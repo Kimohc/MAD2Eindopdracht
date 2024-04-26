@@ -83,10 +83,10 @@ class _RegisterPageState extends State<RegisterPage> {
 
     );
     if(response.statusCode == 201){
-      showMessage("Succesfully registered");
+      showMessage("User geregistreerd");
     }
     else{
-      showMessage("Something went wrong");
+      showMessage("Er is iets misgegaan");
     }
   }
   void showMessage(String message){
